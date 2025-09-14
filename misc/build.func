@@ -2,7 +2,7 @@
 # Author: tteck (tteckster)
 # Co-Author: MickLesk
 # Co-Author: michelroegl-brunner
-# License: MIT | https://github.com/remz1337/ProxmoxVE/raw/remz/LICENSE
+# License: MIT | https://github.com/tyrel/pve-helper-scripts/raw/remz/LICENSE
 
 variables() {
   NSAPP=$(echo "${APP,,}" | tr -d ' ')              # This function sets the NSAPP variable by converting the value of the APP variable to lowercase and removing any spaces.
@@ -15,14 +15,14 @@ variables() {
   CT_TYPE=${var_unprivileged:-$CT_TYPE}
 }
 
-source <(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/api.func)
+source <(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/api.func)
 
 if command -v curl >/dev/null 2>&1; then
-  source <(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/core.func)
+  source <(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/core.func)
   load_functions
   #echo "(build.func) Loaded core.func via curl"
 elif command -v wget >/dev/null 2>&1; then
-  source <(wget -qO- https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/core.func)
+  source <(wget -qO- https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/core.func)
   load_functions
   #echo "(build.func) Loaded core.func via wget"
 fi
@@ -34,7 +34,7 @@ catch_errors() {
 
 # This function is called when an error occurs. It receives the exit code, line number, and command that caused the error, and displays an error message.
 error_handler() {
-  source /dev/stdin <<<$(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/api.func)
+  source /dev/stdin <<<$(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/api.func)
   printf "\e[?25h"
   local exit_code="$?"
   local line_number="$1"
@@ -68,7 +68,7 @@ root_check() {
 
 # This function checks the version of Proxmox Virtual Environment (PVE) and exits if the version is not supported.
 pve_check() {
-  if ! pveversion | grep -Eq "pve-manager/8\.[0-4](\.[0-9]+)*"; then
+  if ! pveversion | grep -Eq "pve-manager/[8-9]\.[0-4](\.[0-9]+)*"; then
     msg_error "${CROSS}${RD}This version of Proxmox Virtual Environment is not supported"
     echo -e "Requires Proxmox Virtual Environment Version 8.1 or later."
     echo -e "Exiting..."
@@ -897,7 +897,7 @@ install_script() {
       header_info
       echo -e "${INFO}${HOLD} ${GN}Using Config File on node $PVEHOST_NAME${CL}"
       METHOD="config_file"
-      source <(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/config-file.func)
+      source <(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/config-file.func)
       config_file
       break
       ;;
@@ -970,7 +970,7 @@ check_container_storage() {
 }
 
 start() {
-  source <(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/tools.func)
+  source <(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/tools.func)
   if command -v pveversion >/dev/null 2>&1; then
     install_script
   else
@@ -1024,9 +1024,9 @@ build_container() {
   TEMP_DIR=$(mktemp -d)
   pushd "$TEMP_DIR" >/dev/null
   if [ "$var_os" == "alpine" ]; then
-    export FUNCTIONS_FILE_PATH="$(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/alpine-install.func)"
+    export FUNCTIONS_FILE_PATH="$(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/alpine-install.func)"
   else
-    export FUNCTIONS_FILE_PATH="$(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/install.func)"
+    export FUNCTIONS_FILE_PATH="$(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/install.func)"
   fi
 
   export DIAGNOSTICS="$DIAGNOSTICS"
@@ -1064,7 +1064,7 @@ build_container() {
   # Check for missing required environment variables
   phs_validate_required_config
   # This executes create_lxc.sh and creates the container and .conf file
-  bash -c "$(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/create_lxc.sh)" $?
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/create_lxc.sh)" $?
 
   LXC_CONFIG=/etc/pve/lxc/${CTID}.conf
   if [ "$CT_TYPE" == "0" ]; then
@@ -1154,8 +1154,8 @@ EOF'
   msg_ok "Customized LXC Container"
 
   # This executes post_create_lxc.sh for additional configurations (default user, shared mount directory, postfix satellite)
-  source <(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/post_create_lxc.sh)
-  lxc-attach -n "$CTID" -- bash -c "$(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/install/"$var_install".sh)" $?
+  source <(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/post_create_lxc.sh)
+  lxc-attach -n "$CTID" -- bash -c "$(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/install/"$var_install".sh)" $?
 }
 
 # This function sets the description of the container.
@@ -1167,7 +1167,7 @@ description() {
     cat <<EOF
 <div align='center'>
   <a href='https://Helper-Scripts.com' target='_blank' rel='noopener noreferrer'>
-    <img src='https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/images/logo-81x112.png' alt='Logo' style='width:81px;height:112px;'/>
+    <img src='https://raw.githubusercontent.com/tyrel/pve-helper-scripts/remz/misc/images/logo-81x112.png' alt='Logo' style='width:81px;height:112px;'/>
   </a>
 
   <h2 style='font-size: 24px; margin: 20px 0;'>${APP} LXC</h2>
@@ -1180,15 +1180,15 @@ description() {
 
   <span style='margin: 0 10px;'>
     <i class="fa fa-github fa-fw" style="color: #f5f5f5;"></i>
-    <a href='https://github.com/remz1337/ProxmoxVE' target='_blank' rel='noopener noreferrer' style='text-decoration: none; color: #00617f;'>GitHub</a>
+    <a href='https://github.com/tyrel/pve-helper-scripts' target='_blank' rel='noopener noreferrer' style='text-decoration: none; color: #00617f;'>GitHub</a>
   </span>
   <span style='margin: 0 10px;'>
     <i class="fa fa-comments fa-fw" style="color: #f5f5f5;"></i>
-    <a href='https://github.com/remz1337/ProxmoxVE/discussions' target='_blank' rel='noopener noreferrer' style='text-decoration: none; color: #00617f;'>Discussions</a>
+    <a href='https://github.com/tyrel/pve-helper-scripts/discussions' target='_blank' rel='noopener noreferrer' style='text-decoration: none; color: #00617f;'>Discussions</a>
   </span>
   <span style='margin: 0 10px;'>
     <i class="fa fa-exclamation-circle fa-fw" style="color: #f5f5f5;"></i>
-    <a href='https://github.com/remz1337/ProxmoxVE/issues' target='_blank' rel='noopener noreferrer' style='text-decoration: none; color: #00617f;'>Issues</a>
+    <a href='https://github.com/tyrel/pve-helper-scripts/issues' target='_blank' rel='noopener noreferrer' style='text-decoration: none; color: #00617f;'>Issues</a>
   </span>
 </div>
 EOF
