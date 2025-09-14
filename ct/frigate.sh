@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-source <(curl -fsSL https://raw.githubusercontent.com/remz1337/ProxmoxVE/remz/misc/build.func)
+source <(curl -fsSL https://raw.githubusercontent.com/tyrel/pve-helper-scripts/tyrel-pve-9/misc/build.func)
 # Copyright (c) 2021-2025 tteck
 # Authors: tteck (tteckster) | Co-Author: remz1337
-# License: MIT | https://github.com/remz1337/ProxmoxVE/raw/remz/LICENSE
+# License: MIT | https://github.com/tyrel/pve-helper-scripts/raw/remz/LICENSE
 # Source: https://frigate.video/
 
 APP="Frigate"
